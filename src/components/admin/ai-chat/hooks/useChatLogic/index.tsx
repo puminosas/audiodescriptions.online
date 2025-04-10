@@ -1,7 +1,8 @@
-import React from 'react';
-import { useMediaQuery } from '@/hooks/use-media-query';
-import { Message } from '../types';
+import React, { useEffect, useState } from 'react';
+import { Message } from '../../types';
 import { useToast } from '@/hooks/use-toast';
+import { useMediaQuery } from '@/hooks/use-media-query';
+import { env } from '@/utils/env';
 
 interface UseChatLogicProps {
   initialMessages?: Message[];
@@ -9,22 +10,24 @@ interface UseChatLogicProps {
 }
 
 export const useChatLogic = ({ initialMessages = [], onSendMessage }: UseChatLogicProps = {}) => {
-  const [messages, setMessages] = React.useState<Message[]>(initialMessages);
-  const [isTyping, setIsTyping] = React.useState(false);
-  const [chatError, setChatError] = React.useState<string | null>(null);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [inputValue, setInputValue] = React.useState('');
+  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [isTyping, setIsTyping] = useState(false);
+  const [chatError, setChatError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [inputValue, setInputValue] = useState('');
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   // Scroll to bottom when messages change
-  React.useEffect(() => {
+  useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const sendMessage = async (message: string) => {
@@ -51,14 +54,29 @@ export const useChatLogic = ({ initialMessages = [], onSendMessage }: UseChatLog
         return;
       }
       
-      // Otherwise, handle internally with simulated response
-      // In a real implementation, this would call an API endpoint
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Call the AI chat API endpoint
+      const response = await fetch(`${env.SUPABASE_URL}/functions/v1/ai-chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${env.SUPABASE_ANON_KEY}`
+        },
+        body: JSON.stringify({ 
+          message,
+          history: messages.map(m => ({ role: m.role, content: m.content }))
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      const data = await response.json();
       
       // Add AI response
       const aiResponse: Message = { 
         role: 'assistant', 
-        content: `I'll help you with that. Let me analyze the information about "${message}".`, 
+        content: data.response || "I'm sorry, I couldn't process that request.", 
         id: (Date.now() + 1).toString(),
         timestamp: Date.now() 
       };

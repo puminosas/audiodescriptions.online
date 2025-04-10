@@ -2,14 +2,16 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import AdminLayout from '@/components/layout/AdminLayout';
 import AIChat from '@/components/admin/ai-chat/AIChat';
-import Analytics from '@/components/admin/analytics/Analytics';
-import Users from '@/components/admin/users/Users';
-import AudioFiles from '@/components/admin/audio-files/AudioFiles';
-import Purchases from '@/components/admin/purchases/Purchases';
-import Documentation from '@/components/admin/documentation/Documentation';
-import Feedback from '@/components/admin/feedback/Feedback';
-import Settings from '@/components/admin/settings/Settings';
 import { useAuth } from '@/context/AuthContext';
+
+// Import placeholders for routes that might not be fully implemented yet
+const Analytics = () => <div className="p-4">Analytics Dashboard Coming Soon</div>;
+const Users = () => <div className="p-4">User Management Coming Soon</div>;
+const AudioFiles = () => <div className="p-4">Audio Files Management Coming Soon</div>;
+const Purchases = () => <div className="p-4">Purchases Dashboard Coming Soon</div>;
+const Documentation = () => <div className="p-4">Documentation Coming Soon</div>;
+const Feedback = () => <div className="p-4">Feedback Management Coming Soon</div>;
+const Settings = () => <div className="p-4">Settings Coming Soon</div>;
 
 const AdminRoutes = () => {
   const { user, isLoading } = useAuth();

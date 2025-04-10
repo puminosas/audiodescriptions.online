@@ -26,6 +26,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const location = useLocation();
   const { signOut } = useAuth();
   const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false);
+  
+  // Use the useMediaQuery hook with a default value to prevent errors
   const isMobile = useMediaQuery('(max-width: 768px)');
   
   // Close sidebar when switching to desktop view

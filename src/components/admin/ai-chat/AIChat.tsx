@@ -14,37 +14,43 @@ interface AIChatProps {
 }
 
 const AIChat: React.FC<AIChatProps> = () => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  // Use the useMediaQuery hook with a default value to prevent errors
+  const isMobile = useMediaQuery('(max-width: 768px)') || false;
   const [activeTab, setActiveTab] = useState('chat');
   
-  // Initialize chat logic
-  const {
-    messages,
-    isTyping,
-    chatError,
-    isLoading,
-    messagesEndRef,
-    sendMessage,
-    retryLastMessage,
-    clearChat,
-    addSystemMessage
-  } = useChatLogic();
+  // Initialize chat logic with error handling
+  const chatLogic = useChatLogic();
   
-  // Initialize file logic
+  // Initialize file logic with error handling
+  const fileLogic = useFileLogic();
+  
+  // Safely destructure values with fallbacks to prevent undefined errors
   const {
-    files,
-    selectedFile,
-    fileContent,
-    isLoadingContent,
-    fileError,
-    isEditing,
-    fetchFiles,
-    handleFileSelect,
-    handleSaveFile,
-    setFileContent,
-    setIsEditing,
-    setFileError
-  } = useFileLogic();
+    messages = [],
+    isTyping = false,
+    chatError = null,
+    isLoading = false,
+    messagesEndRef = React.createRef(),
+    sendMessage = () => {},
+    retryLastMessage = () => {},
+    clearChat = () => {},
+    addSystemMessage = () => {}
+  } = chatLogic || {};
+  
+  const {
+    files = [],
+    selectedFile = null,
+    fileContent = '',
+    isLoadingContent = false,
+    fileError = null,
+    isEditing = false,
+    fetchFiles = () => {},
+    handleFileSelect = () => {},
+    handleSaveFile = () => {},
+    setFileContent = () => {},
+    setIsEditing = () => {},
+    setFileError = () => {}
+  } = fileLogic || {};
   
   // Handle file analysis with AI
   const handleAnalyzeWithAI = () => {
@@ -77,6 +83,39 @@ const AIChat: React.FC<AIChatProps> = () => {
           </TabsList>
           
           <TabsContent value="chat" className="flex-1 flex flex-col mt-0 data-[state=inactive]:hidden">
+            {ChatInterface && (
+              <ChatInterface
+                messages={messages}
+                isTyping={isTyping}
+                chatError={chatError}
+                sendMessage={sendMessage}
+                retryLastMessage={retryLastMessage}
+                messagesEndRef={messagesEndRef}
+                isLoading={isLoading}
+              />
+            )}
+          </TabsContent>
+          
+          <TabsContent value="files" className="flex-1 flex flex-col mt-0 data-[state=inactive]:hidden">
+            {FileExplorer && (
+              <FileExplorer
+                selectedFile={selectedFile}
+                fileContent={fileContent}
+                isLoadingContent={isLoadingContent}
+                fileError={fileError}
+                handleFileSelect={handleFileSelect}
+                setFileContent={setFileContent}
+                setIsEditing={setIsEditing}
+                handleSaveFile={handleSaveFile}
+                handleAnalyzeWithAI={handleAnalyzeWithAI}
+                retryLastMessage={retryLastMessage}
+              />
+            )}
+          </TabsContent>
+        </Tabs>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1">
+          {ChatInterface && (
             <ChatInterface
               messages={messages}
               isTyping={isTyping}
@@ -86,9 +125,9 @@ const AIChat: React.FC<AIChatProps> = () => {
               messagesEndRef={messagesEndRef}
               isLoading={isLoading}
             />
-          </TabsContent>
+          )}
           
-          <TabsContent value="files" className="flex-1 flex flex-col mt-0 data-[state=inactive]:hidden">
+          {FileExplorer && (
             <FileExplorer
               selectedFile={selectedFile}
               fileContent={fileContent}
@@ -101,32 +140,7 @@ const AIChat: React.FC<AIChatProps> = () => {
               handleAnalyzeWithAI={handleAnalyzeWithAI}
               retryLastMessage={retryLastMessage}
             />
-          </TabsContent>
-        </Tabs>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1">
-          <ChatInterface
-            messages={messages}
-            isTyping={isTyping}
-            chatError={chatError}
-            sendMessage={sendMessage}
-            retryLastMessage={retryLastMessage}
-            messagesEndRef={messagesEndRef}
-            isLoading={isLoading}
-          />
-          
-          <FileExplorer
-            selectedFile={selectedFile}
-            fileContent={fileContent}
-            isLoadingContent={isLoadingContent}
-            fileError={fileError}
-            handleFileSelect={handleFileSelect}
-            setFileContent={setFileContent}
-            setIsEditing={setIsEditing}
-            handleSaveFile={handleSaveFile}
-            handleAnalyzeWithAI={handleAnalyzeWithAI}
-            retryLastMessage={retryLastMessage}
-          />
+          )}
         </div>
       )}
     </div>

@@ -1,125 +1,128 @@
-# AudioDescriptions.online Project Deployment Guide
+# Deployment Guide for AudioDescriptions.online
 
-This document provides instructions for deploying the improved AudioDescriptions.online project.
+This guide provides step-by-step instructions for deploying the AudioDescriptions.online application to production.
 
 ## Prerequisites
 
-- Node.js 16.x or higher
-- npm 8.x or higher
-- A Supabase account with the existing project
-- Google Cloud Platform account with TTS API enabled
+- Node.js 16+ and npm
+- Supabase account
+- Google Cloud account with Text-to-Speech API enabled
 - OpenAI API key
+- Git
 
-## Project Structure
+## Environment Variables
 
-The project has been improved with:
-
-1. **Responsive Design**: All components now properly adapt to different screen sizes
-2. **Enhanced AI Assistant**: The assistant can now access and analyze files while respecting security constraints
-3. **Improved Error Handling**: Better error handling throughout the application
-4. **Comprehensive Tests**: Unit tests for all major components
-
-## Deployment Steps
-
-### 1. Local Setup and Testing
-
-```bash
-# Clone the repository
-git clone <your-repository-url>
-cd audio-description-magic
-
-# Install dependencies
-npm install
-
-# Run tests to verify functionality
-npm test
-
-# Start development server
-npm run dev
-```
-
-### 2. Environment Configuration
-
-Ensure all environment variables are properly set in your deployment platform:
+Before deployment, ensure you have the following environment variables configured:
 
 ```
-SUPABASE_URL=<your-supabase-url>
-SUPABASE_ANON_KEY=<your-supabase-anon-key>
-SUPABASE_SERVICE_ROLE_KEY=<your-supabase-service-role-key>
-SUPABASE_DB_URL=<your-supabase-db-url>
-OPENAI_API_KEY=<your-openai-api-key>
-GOOGLE_API_KEY=<your-google-api-key>
-GOOGLE_APPLICATION_CREDENTIALS_JSON=<your-google-credentials-json>
-GCS_BUCKET_NAME=<your-gcs-bucket-name>
-GCS_PROJECT_ID=<your-gcs-project-id>
+SUPABASE_URL=https://your-supabase-project-id.supabase.co
+SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
+SUPABASE_DB_URL=postgresql://postgres:your-password@db.your-project-id.supabase.co:5432/postgres
+OPENAI_API_KEY=your-openai-api-key
+GOOGLE_API_KEY=your-google-api-key
+GOOGLE_APPLICATION_CREDENTIALS_JSON={"type":"service_account",...}
+GCS_BUCKET_NAME=your-gcs-bucket-name
+GCS_PROJECT_ID=your-gcs-project-id
 ```
 
-### 3. Building for Production
+## Local Development
 
-```bash
-# Build the project
-npm run build
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/audiodescriptions.online.git
+   cd audiodescriptions.online
+   ```
 
-# Test the production build locally
-npm run preview
-```
+2. Install dependencies:
+   ```
+   npm install
+   ```
 
-### 4. Deploying to Render.com
+3. Create a `.env` file in the root directory with the environment variables listed above.
 
-1. Log in to your Render.com account
-2. Create a new Web Service
-3. Connect to your GitHub repository
-4. Configure the service:
-   - Name: audiodescriptions-online
-   - Environment: Node
-   - Build Command: `npm install && npm run build`
-   - Start Command: `npm run start`
-5. Add all environment variables from step 2
-6. Deploy the service
+4. Start the development server:
+   ```
+   npm run dev
+   ```
 
-### 5. Supabase Edge Functions
+5. The application will be available at `http://localhost:5173`.
 
-The project uses Supabase Edge Functions for serverless functionality. Deploy them using:
+## Supabase Edge Functions Deployment
 
-```bash
-# Navigate to the supabase functions directory
-cd supabase/functions
+1. Install Supabase CLI:
+   ```
+   npm install -g supabase
+   ```
 
-# Deploy the generate-description function
-supabase functions deploy generate-description --project-ref <your-project-ref>
+2. Login to Supabase:
+   ```
+   supabase login
+   ```
 
-# Deploy other functions as needed
-```
+3. Link your project:
+   ```
+   supabase link --project-ref your-project-ref
+   ```
 
-### 6. Post-Deployment Verification
+4. Deploy the Edge Functions:
+   ```
+   supabase functions deploy generate-description
+   supabase functions deploy audio-proxy
+   ```
 
-After deployment, verify:
+## Production Deployment with Render.com
 
-1. The application loads correctly on desktop and mobile devices
-2. User authentication works
-3. The AI assistant can access and analyze files
-4. Audio generation functionality works correctly
-5. Feedback system is operational
+1. Create a new Web Service on Render.com.
+
+2. Connect your GitHub repository.
+
+3. Configure the following settings:
+   - **Name**: audiodescriptions-online
+   - **Environment**: Node
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm run start`
+
+4. Add all the environment variables listed above in the Environment section.
+
+5. Click "Create Web Service".
+
+6. Your application will be deployed to a URL like `https://audiodescriptions-online.onrender.com`.
+
+## Post-Deployment Verification
+
+After deployment, verify the following functionality:
+
+1. Text-to-Audio generation
+2. Admin panel access
+3. Feedback submission
+4. Audio playback across different browsers
 
 ## Troubleshooting
 
-### Common Issues
+If you encounter issues after deployment:
 
-1. **API Key Issues**: Ensure all API keys are correctly set in environment variables
-2. **CORS Errors**: Check Supabase configuration for proper CORS settings
-3. **File Access Problems**: Verify file permissions in the AI assistant
-4. **Mobile Layout Issues**: Test on various device sizes using browser dev tools
+1. **CORS Errors**: Ensure the audio-proxy Edge Function is properly deployed and accessible.
 
-### Support
+2. **Environment Variables**: Verify all environment variables are correctly set in your production environment.
 
-For additional support, contact the development team or refer to the project documentation.
+3. **API Limits**: Check if you've reached any API limits for OpenAI or Google Cloud.
 
-## Maintenance
+4. **Console Errors**: Use browser developer tools to check for any JavaScript errors.
 
-Regular maintenance tasks:
+## Updating the Application
 
-1. Update dependencies monthly
-2. Monitor API usage and costs
-3. Review and update AI prompts as needed
-4. Check for security vulnerabilities
-5. Backup database regularly
+To update the application:
+
+1. Push changes to your GitHub repository.
+
+2. Render.com will automatically deploy the new version.
+
+3. For Edge Functions, redeploy them using the Supabase CLI:
+   ```
+   supabase functions deploy function-name
+   ```
+
+## Support
+
+If you need assistance, please contact support@audiodescriptions.online.
