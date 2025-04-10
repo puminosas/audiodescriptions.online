@@ -1,0 +1,126 @@
+
+#root {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0.5rem;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  #root {
+    max-width: 1280px;
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  #root {
+    padding: 2rem;
+  }
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Responsive adjustments */
+.container {
+  width: 100%;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+/* Fix for mobile padding */
+main {
+  padding-top: 60px;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+@media (min-width: 768px) {
+  main {
+    padding-top: 80px;
+  }
+}
+
+/* Glassmorphism utility class */
+.glassmorphism {
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-in-out;
+}
